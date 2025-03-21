@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>洗碗碟机速算工具</title>
+    <style>
+        /* 全局样式 */
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #f4f4f9;
+            color: #333;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+
+        /* 容器样式 */
+        .container {
+            background: white;
+            padding: 2rem;
+            border-radius: 10px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+            max-width: 500px;
+            width: 100%;
+        }
+
+        h1 {
+            text-align: center;
+            color: #50b3a2;
+            margin-bottom: 1.5rem;
+        }
+
+        /* 输入组样式 */
+        .input-group {
+            margin-bottom: 1rem;
+        }
+
+        .input-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: bold;
+            color: #555;
+        }
+
+        .input-group input {
+            width: 100%;
+            padding: 0.75rem;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 1rem;
+            box-sizing: border-box;
+        }
+
+        .input-group input:focus {
+            border-color: #50b3a2;
+            outline: none;
+        }
+
+        /* 按钮样式 */
+        button {
+            width: 100%;
+            padding: 0.75rem;
+            background-color: #50b3a2;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        button:hover {
+            background-color: #3a8c7d;
+        }
+
+        /* 结果样式 */
+        .result {
+            margin-top: 1.5rem;
+            padding: 1rem;
+            background-color: #f9f9f9;
+            border-radius: 5px;
+            border: 1px solid #ddd;
+        }
+
+        .result p {
+            margin: 0.5rem 0;
+            font-weight: bold;
+        }
+
+        .result span {
+            color: #50b3a2;
+        }
+
+        /* 建议样式 */
+        .suggestion {
+            margin-top: 1rem;
+            text-align: center;
+            font-weight: bold;
+            color: #333;
+        }
+
+        .suggestion span {
+            color: #50b3a2;
+        }
+
+        /* 响应式设计 */
+        @media (max-width: 600px) {
+            .container {
+                padding: 1rem;
+            }
+
+            h1 {
+                font-size: 1.5rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>洗碗碟机速算工具</h1>
+        <div class="input-group">
+            <label for="gas-price">燃气价格（元/m³）:</label>
+            <input type="number" id="gas-price" step="0.01">
+        </div>
+        <div class="input-group">
+            <label for="electricity-price">电价（元/kWh）:</label>
+            <input type="number" id="electricity-price" step="0.01">
+        </div>
+        <div class="input-group">
+            <label for="power">洗碗碟机热水器功率（kW）:</label>
+            <input type="number" id="power" step="0.01">
+        </div>
+        <div class="input-group">
+            <label for="daily-hours">洗碗碟机日使用时长（小时）:</label>
+            <input type="number" id="daily-hours" step="0.01">
+        </div>
+        <div class="input-group">
+            <label for="annual-days">洗碗碟机年使用天数（天/年）:</label>
+            <input type="number" id="annual-days" step="1">
+        </div>
+        <div class="input-group">
+            <label for="cost">改造成本（￥）:</label>
+            <input type="number" id="cost" step="1">
+        </div>
+        <button onclick="calculate()">计算</button>
+
+        <div class="result">
+            <p>新增气量: <span id="new-gas"></span> m³</p>
+            <p>节能费用: <span id="savings"></span> ￥</p>
+            <p>改造成本回本期: <span id="payback"></span> 月</p>
+            <p>每年减碳量: <span id="carbon-reduction"></span> 吨</p>
+        </div>
+        <div class="suggestion">
+            <p>建议: <span id="suggestion"></span></p>
+        </div>
+    </div>
+
+    <script>
+        function calculate() {
+            const gasPrice = parseFloat(document.getElementById('gas-price').value);
+            const electricityPrice = parseFloat(document.getElementById('electricity-price').value);
+            const power = parseFloat(document.getElementById('power').value);
+            const dailyHours = parseFloat(document.getElementById('daily-hours').value);
+            const annualDays = parseFloat(document.getElementById('annual-days').value);
+            const cost = parseFloat(document.getElementById('cost').value);
+
+            const newGas = power * dailyHours * annualDays * 3.6 / 36;
+            const savings = power * dailyHours * annualDays * (electricityPrice - gasPrice * 3.6 / 36);
+            const payback = (cost / savings) * 12;
+            const carbonReduction = power * dailyHours * annualDays * (0.541 - 0.2) / 1000;
+
+            document.getElementById('new-gas').textContent = newGas.toFixed(2);
+            document.getElementById('savings').textContent = savings.toFixed(2);
+            document.getElementById('payback').textContent = payback.toFixed(2);
+            document.getElementById('carbon-reduction').textContent = carbonReduction.toFixed(2);
+
+            const suggestion = payback < 18 ? "由燃气公司投资" : "由客户投资";
+            document.getElementById('suggestion').textContent = suggestion;
+        }
+    </script>
+</body>
+</html>
